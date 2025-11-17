@@ -17,3 +17,6 @@ build/
 
 # Temp / cache
 .cache/
+
+package-lock.json
+package.json
