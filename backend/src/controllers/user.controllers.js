@@ -15,7 +15,8 @@ export const generateAccessAndRefreshTokens = async(userId) =>{
 
 
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while generating referesh and access token")
+    console.error("generateAccessAndRefreshTokens error:", error);
+    throw new Error("Something went wrong while generating refresh and access token");
     }
 }
 
@@ -201,7 +202,7 @@ const refreshAccessToken = async (req, res) => {
             secure: true
         }
     
-        const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
+        const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
         console.log("newrefreshtoken : ", refreshToken)
     
         return res

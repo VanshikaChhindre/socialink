@@ -35,7 +35,7 @@ const userSchema = new Schema(
             type: String
         },
         connectedAccounts: {
-            instagram: {
+            linkdin: {
             accessToken: String,
             refreshToken: String,
             accountId: String,

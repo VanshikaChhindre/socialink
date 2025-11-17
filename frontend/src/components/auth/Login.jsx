@@ -9,7 +9,7 @@ import {useLoginMutation} from '../../features/auth/authApiSlice'
 
 const Login = () => {
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation(); 
     const dispatch = useDispatch()
@@ -17,19 +17,17 @@ const Login = () => {
 
     const loginUser = async(data)=>{
       const userData = {
-        email: data.credential,
-        username: data.credential,
+        email: data.email,
         password: data.password
       }
 
       try {
         const response = await login(userData).unwrap();
-        console.log(response.data)  
+        console.log(response)  
+
+        const accessToken = response.accessToken
+        const user = response.user
          console.log("Login in successful");
-
-        const accessToken = response.data.accessToken
-        const user = response.data.user
-
         dispatch(setCredentials({user:user, token: accessToken}))
 
         navigate('/on-boarding')

@@ -14,22 +14,6 @@ const platforms = [
     description: "Connect your YouTube channel to schedule videos and track analytics",
   },
   {
-    id: "instagram",
-    name: "Instagram",
-    icon: "📷",
-    color: "#E4405F",
-    bgColor: "bg-pink-50",
-    description: "Link your Instagram account to post photos, stories, and reels",
-  },
-  {
-    id: "facebook",
-    name: "Facebook",
-    icon: "f",
-    color: "#1877F2",
-    bgColor: "bg-blue-50",
-    description: "Connect Facebook to manage posts and pages in one place",
-  },
-  {
     id: "twitter",
     name: "X (Twitter)",
     icon: "𝕏",
@@ -38,7 +22,7 @@ const platforms = [
     description: "Link your X account to schedule tweets and monitor engagement",
   },
   {
-    id: "Linkedin",
+    id: "linkedin",
     name: "Linkedin",
     icon: "in",
     color: "#000000",
@@ -51,11 +35,17 @@ export default function OnboardingConnect() {
   const [connectedPlatforms, setConnectedPlatforms] = useState(new Set());
   const [isConnecting, setIsConnecting] = useState(null);
 
+
+
   const handleConnect = async (platformId) => {
-    setIsConnecting(platformId);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setConnectedPlatforms((prev) => new Set(prev).add(platformId));
-    setIsConnecting(null);
+      if(platformId == "linkedin"){
+         window.location.href = "http://localhost:5000/api/auth/linkedin"
+      } else {
+      setIsConnecting(platformId);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setConnectedPlatforms((prev) => new Set(prev).add(platformId));
+      setIsConnecting(null);
+      }
   };
 
   const handleDisconnect = (platformId) => {
@@ -81,7 +71,7 @@ export default function OnboardingConnect() {
     if (isSuccess && userData) {
       dispatch(setCredentials({user:userData, token: null}))
     }
-  }, [isSuccess, userData])
+}, [isSuccess, userData, dispatch])
 
   //authorizing user
   const user = useSelector(selectCurrentUser);

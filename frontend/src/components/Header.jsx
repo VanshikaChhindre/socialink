@@ -18,7 +18,7 @@ const Header = () => {
     const user = useSelector(selectCurrentUser);
     const [logout] = useLogoutMutation();
     const dispatch = useDispatch();
-    const username = user.name || user.user.name;
+    const username = user?.name || user?.user?.name;
     
 
     const logoutHandler = async() =>{

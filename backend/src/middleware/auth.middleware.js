@@ -6,7 +6,7 @@ export const verifyJWT = async(req, res, next) => {
         const token = await req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
 
         if(!token){
-           return res.send(401).json({message : "Unauthorized request!", success: false})
+           return res.status(401).json({message : "Unauthorized request!", success: false})
         }
 
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -15,13 +15,13 @@ export const verifyJWT = async(req, res, next) => {
         )
 
         if(!user){
-            return res.send(401).json({message : "Invalid Access Token", success: false})
+            return res.status(401).json({message : "Invalid Access Token", success: false})
         }
 
         req.user = user;
         next()
 
     } catch (error) {
-         return res.send(401).json({message : `Invalid Access: ${error.message}`, success: false})
+         return res.status(401).json({message : `Invalid Access: ${error.message}`, success: false})
     }
 }

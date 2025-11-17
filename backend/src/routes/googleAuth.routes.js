@@ -1,5 +1,5 @@
 import express from "express";
-import passport from "../authGoogle/googleAuth.js"; 
+import passport from "../config/googleAuth.js"; 
 import { generateAccessAndRefreshTokens } from "../controllers/user.controllers.js";
 
 const router = express.Router();
