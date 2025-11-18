@@ -39,7 +39,15 @@ export default function OnboardingConnect() {
 
   const handleConnect = async (platformId) => {
       if(platformId == "linkedin"){
-         window.location.href = "http://localhost:5000/api/auth/linkedin"
+        const params = new URLSearchParams({
+          response_type : 'code',
+          client_id : import.meta.env.VITE_LINKEDIN_CLIENT_ID,
+          redirect_uri : "http://localhost:5000/api/auth/linkedin/callback",
+          scope : "openid profile w_member_social email"
+        })
+
+        window.location.href = `https://www.linkedin.com/oauth/v2/authorization?${params}`
+
       } else {
       setIsConnecting(platformId);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -75,6 +83,17 @@ export default function OnboardingConnect() {
 
   //authorizing user
   const user = useSelector(selectCurrentUser);
+  useEffect(() => {
+  if (user) {
+    const set = new Set();
+
+    if (user.connectedAccounts?.linkedin?.accessToken) {
+      set.add("linkedin");
+    }
+
+    setConnectedPlatforms(set);
+  }
+}, [user]);
 
   return (
     <>

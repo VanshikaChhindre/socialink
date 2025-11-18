@@ -7,8 +7,8 @@ import cookieParser from "cookie-parser"
 import session from "express-session";
 
 import passport from "passport"; 
-import "./config/googleAuth.js";        // attaches Google strategy
-import "./config/linkedin.passport.js"; 
+import "./config/googleAuth.js";        
+
 
 import googleAuthRouter from "./routes/googleAuth.routes.js";
 import linkedinRouter from "./routes/linkedin.routes.js";
@@ -54,7 +54,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth", googleAuthRouter);
-app.use("/api/auth", linkedinRouter); 
+app.use("/api/auth/linkedin", linkedinRouter); 
 
 
 

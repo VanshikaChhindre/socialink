@@ -35,12 +35,14 @@ const userSchema = new Schema(
             type: String
         },
         connectedAccounts: {
-            linkdin: {
-            accessToken: String,
-            refreshToken: String,
-            accountId: String,
-            expiresAt: Date
-            }
+            linkedin: {
+                linkedinId: String,  // userData.sub
+                name: String,
+                email: String,
+                picture: String,
+                accessToken: String,
+                expiresAt: Date,
+            },
         }
     },
     {timestamps: true}
