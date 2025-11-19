@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Input from '../Input'
@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setCredentials } from '../../features/auth/authSlice'
 import {useLoginMutation} from '../../features/auth/authApiSlice'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '../../features/auth/authSlice'
 
 const Login = () => {
 
@@ -14,6 +16,13 @@ const Login = () => {
     const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation(); 
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const user = useSelector(selectCurrentUser);
+    useEffect(() => {
+    if (user) {
+      navigate('/socials');
+    }
+  }, [user, navigate]);
 
     const loginUser = async(data)=>{
       const userData = {

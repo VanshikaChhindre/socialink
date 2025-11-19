@@ -23,6 +23,7 @@ const baseQueryWithReauth = async(args, api, extraOptions) => {
 
     if (result?.error?.originalStatus === 401){
         console.log("sending refresh token")
+        
 
         const refreshResult = await baseQuery(
             {
@@ -38,11 +39,17 @@ const baseQueryWithReauth = async(args, api, extraOptions) => {
             );
           
         console.log("refreshResult", refreshResult)
-        if(refreshResult?.data){
-            const user = api.getState().auth.user
-            //store new token
-            api.dispatch(setCredentials({...refreshResult.data, user}))
-            //retry the original query with new access token
+
+        if(refreshResult?.data?.data?.accessToken){
+            const newAccessToken = refreshResult.data.data.accessToken;
+
+            const currentUser = api.getState().auth.user;
+
+            api.dispatch(setCredentials({
+                user: currentUser,
+                accessToken: newAccessToken
+            }));
+           
             result = await baseQuery(args, api, extraOptions)
         } else {
             api.dispatch(logoutUser())

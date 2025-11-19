@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 
 const getAccessToken = async (code) => {
     const body = new URLSearchParams({
@@ -18,11 +19,9 @@ const getAccessToken = async (code) => {
     });
 
     if (!response.ok) {
-        console.log(await response.text());
         throw new Error("Failed to get access token");
     }
 
-    console.log("access response: ", response)
     const accessToken = await response.json();
     return accessToken;
 };
@@ -50,11 +49,25 @@ export const linkedInCallback = async(req, res) => {
     const accessToken = await getAccessToken(code);
     
     const userData = await getUserData(accessToken);
-    console.log("User data:", userData);
 
-    const user =  req.user;
+    const token = req.cookies?.accessToken;
 
-    const foundUser = await User.findById(user._id);
+    if (!token) {
+      return res.status(401).json({
+        message: "User is not logged in. Must log in first."
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    const foundUser = await User.findById(decoded._id);
+
+    if (!foundUser) {
+      return res.status(404).json({
+        message: "User not found in database",
+        success: false
+      });
+    }
 
     if(foundUser){
         foundUser.connectedAccounts.linkedin = {
@@ -73,8 +86,10 @@ export const linkedInCallback = async(req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({
-        error
+         console.error("LinkedIn callback error →", error.message);
+    return res.status(500).json({
+        success: false,
+        message: error.message
     })
     }
 }
