@@ -9,7 +9,7 @@ const authSlice = createSlice({
             console.log(action.payload)
             const { user, accessToken } = action.payload
             state.user = user;
-            state.token = accessToken;
+            state.token = accessToken ?? state.token
         },
         logoutUser: (state, action) =>{
             state.user = null;

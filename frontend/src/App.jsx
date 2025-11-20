@@ -23,7 +23,6 @@ function App() {
             dispatch(
               setCredentials({
                 user: data.user,
-                accessToken: null, // token will already be sent in cookies
               })
             )
           }

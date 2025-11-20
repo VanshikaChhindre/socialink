@@ -43,6 +43,16 @@ const userSchema = new Schema(
                 accessToken: String,
                 expiresAt: Date,
             },
+            instagram: {
+                instagramId: String,  
+                username: String,
+                name: String,
+                mediaCount: Number,
+                followCount: Number,
+                picture: String,
+                accessToken: String,
+                expiresAt: Date,
+            },
         }
     },
     {timestamps: true}

@@ -12,6 +12,7 @@ import "./config/googleAuth.js";
 
 import googleAuthRouter from "./routes/googleAuth.routes.js";
 import linkedinRouter from "./routes/linkedin.routes.js";
+import instagramRouter from "./routes/instagram.routes.js"
 
 
 
@@ -55,6 +56,8 @@ app.use(passport.session());
 
 app.use("/api/auth", googleAuthRouter);
 app.use("/api/auth/linkedin", linkedinRouter); 
+
+app.use("/instagram", instagramRouter)
 
 
 

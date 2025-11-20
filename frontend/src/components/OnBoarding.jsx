@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, setCredentials } from "../features/auth/authSlice";
 import { useCurrentUserQuery } from "../features/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
+import LinkedInConnectCard from "./connect-cards/LinkedInConnectCard";
+
 
 const platforms = [
   {
@@ -24,15 +26,7 @@ const platforms = [
     description:
       "Link your X account to schedule tweets and monitor engagement",
   },
-  {
-    id: "linkedin",
-    name: "LinkedIn",
-    icon: "in",
-    color: "#0a66c2",
-    bgColor: "bg-blue-50",
-    description:
-      "Link your LinkedIn account to schedule posts and monitor engagement",
-  },
+  
 ];
 
 export default function OnboardingConnect() {
@@ -41,18 +35,6 @@ export default function OnboardingConnect() {
   const [isConnecting, setIsConnecting] = useState(null);
 
   const user = useSelector(selectCurrentUser);
-  useEffect(() => {
-      if (user) {
-        const set = new Set();
-
-        if (user.connectedAccounts?.linkedin?.accessToken) {
-          set.add("linkedin");
-        }
-
-        setConnectedPlatforms(set);
-      }
-    }, [user]);
-
 
   const navigate = useNavigate();
 
@@ -61,25 +43,24 @@ export default function OnboardingConnect() {
 
   useEffect(() => {
     if (isSuccess && userData) {
-      dispatch(setCredentials({ user: userData, token: null }));
+      dispatch(setCredentials({ user: userData.user }));
     }
   }, [isSuccess, userData, dispatch]);
 
+  useEffect(() => {
+  if (user) {
+    const set = new Set();
+
+    if (user?.connectedAccounts?.linkedin?.accessToken) {
+      set.add("linkedin");
+    }
+
+    setConnectedPlatforms(set);
+  }
+}, [userData, user]);
 
   // Handle platform connection
   const handleConnect = (platformId) => {
-    if (platformId === "linkedin") {
-      const params = new URLSearchParams({
-        response_type: "code",
-        client_id: import.meta.env.VITE_LINKEDIN_CLIENT_ID,
-        redirect_uri: "http://localhost:5000/api/auth/linkedin/callback",
-        scope: "openid profile w_member_social email",
-      });
-
-      window.location.href = `https://www.linkedin.com/oauth/v2/authorization?${params}`;
-      return;
-    }
-
     // Dummy connection for other platforms
     setIsConnecting(platformId);
     setTimeout(() => {
@@ -182,6 +163,12 @@ export default function OnboardingConnect() {
               </div>
             );
           })}
+          <LinkedInConnectCard
+          isConnected={connectedPlatforms.has("linkedin")}
+          onConnect={() => handleConnect("linkedin")}
+          onDisconnect={() => handleDisconnect("linkedin")}
+        />
+
         </div>
 
         {/* Footer */}
