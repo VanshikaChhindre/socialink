@@ -27,7 +27,10 @@ export default function LinkedInConnectCard({ isConnected, onConnect, onDisconne
             className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center text-2xl"
             style={{ color: "#0a66c2" }}
           >
-            in
+            <img
+              src='/linkedin.png'
+              className='w-9 h-9'
+            />
           </div>
           <div>
             <h3 className="text-xl text-gray-900">LinkedIn</h3>

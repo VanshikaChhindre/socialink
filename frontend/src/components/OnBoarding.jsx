@@ -5,6 +5,7 @@ import { selectCurrentUser, setCredentials } from "../features/auth/authSlice";
 import { useCurrentUserQuery } from "../features/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
 import LinkedInConnectCard from "./connect-cards/LinkedInConnectCard";
+import InstagramConnectCard from "./connect-cards/InstagramConnectCard";
 
 
 const platforms = [
@@ -35,12 +36,10 @@ export default function OnboardingConnect() {
   const [isConnecting, setIsConnecting] = useState(null);
 
   const user = useSelector(selectCurrentUser);
-
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-  const { data: userData, isSuccess } = useCurrentUserQuery();
 
+  const { data: userData, isSuccess } = useCurrentUserQuery();
   useEffect(() => {
     if (isSuccess && userData) {
       dispatch(setCredentials({ user: userData.user }));
@@ -55,11 +54,17 @@ export default function OnboardingConnect() {
       set.add("linkedin");
     }
 
+    if (user?.connectedAccounts?.instagram?.accessToken) {
+      set.add("instagram");
+    }
+
+    setConnectedPlatforms(set);
+
     setConnectedPlatforms(set);
   }
 }, [userData, user]);
 
-  // Handle platform connection
+
   const handleConnect = (platformId) => {
     // Dummy connection for other platforms
     setIsConnecting(platformId);
@@ -78,7 +83,7 @@ export default function OnboardingConnect() {
   };
 
   const handleContinue = () => {
-    alert("Onboarding complete — redirect to dashboard here.");
+   
     navigate('/socials')
   };
 
@@ -130,12 +135,7 @@ export default function OnboardingConnect() {
                     </div>
                     <div>
                       <h3 className="text-xl text-gray-900">{platform.name}</h3>
-                      {isConnected && (
-                        <div className="flex items-center gap-1 text-sm text-green-600 mt-1">
-                          <Check className="w-4 h-4" />
-                          <span>Connected</span>
-                        </div>
-                      )}
+                      
                     </div>
                   </div>
                 </div>
@@ -144,25 +144,19 @@ export default function OnboardingConnect() {
                   {platform.description}
                 </p>
 
-                {isConnected ? (
                   <button
-                    className="w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-800"
-                    onClick={() => handleDisconnect(platform.id)}
+                    className="w-full py-2 border border-gray-300 rounded-lg text-gray-800"
                   >
-                    Disconnect
+                    Upcoming
                   </button>
-                ) : (
-                  <button
-                    className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                    onClick={() => handleConnect(platform.id)}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Connecting..." : "Connect"}
-                  </button>
-                )}
+                
               </div>
             );
           })}
+          <InstagramConnectCard
+          isConnected={connectedPlatforms.has("instagram")}
+          onDisconnect={() => handleDisconnect("instagram")}
+          />
           <LinkedInConnectCard
           isConnected={connectedPlatforms.has("linkedin")}
           onConnect={() => handleConnect("linkedin")}
