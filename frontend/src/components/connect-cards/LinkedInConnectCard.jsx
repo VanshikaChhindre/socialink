@@ -2,7 +2,7 @@
 import React from "react";
 import { Check } from "lucide-react";
 
-export default function LinkedInConnectCard({ isConnected, onConnect, onDisconnect }) {
+export default function LinkedInConnectCard({ isConnected, onDisconnect }) {
 
   const handleLinkedIn = () => {
     const params = new URLSearchParams({

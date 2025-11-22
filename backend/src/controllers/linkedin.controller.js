@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import axios from "axios"
 
 const getAccessToken = async (code) => {
     const body = new URLSearchParams({
@@ -93,3 +94,41 @@ export const linkedInCallback = async(req, res) => {
     })
     }
 }
+
+export const linkedInDisconnect = async (req, res) => {
+  try {
+    const token = req.cookies?.accessToken;
+    if (!token) return res.status(401).json({ message: "Not logged in" });
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decoded._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const linkedinAccount = user.connectedAccounts?.linkedin;
+    if (!linkedinAccount) {
+      return res.status(200).json({ message: "No LinkedIn token to revoke" });
+    }
+
+    // 1. Revoke token in LinkedIn
+    await axios.post(
+      "https://www.linkedin.com/oauth/v2/revoke",
+      new URLSearchParams({
+        client_id: process.env.LINKEDIN_CLIENT_ID,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+        token: linkedinAccount.accessToken,
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    // 2. Remove from database
+    user.connectedAccounts.linkedin = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: "LinkedIn disconnected" });
+
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+    return res.status(500).json({ error: "Failed to disconnect LinkedIn" });
+  }
+};
+

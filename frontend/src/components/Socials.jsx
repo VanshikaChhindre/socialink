@@ -107,7 +107,7 @@ export default function Socials() {
                 <Calendar className="w-4 h-4 text-blue-600" />
               </div>
               <p className="text-3xl text-blue-900">
-               {user.connectedAccounts.instagram.mediaCount}
+               {user.connectedAccounts != null? user.connectedAccounts.instagram.mediaCount : 10}
               </p>
               <p className="text-xs text-blue-600 mt-1">
                 This month

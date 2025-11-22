@@ -6,6 +6,7 @@ import { useCurrentUserQuery } from "../features/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
 import LinkedInConnectCard from "./connect-cards/LinkedInConnectCard";
 import InstagramConnectCard from "./connect-cards/InstagramConnectCard";
+import axios from "axios";
 
 
 const platforms = [
@@ -39,7 +40,8 @@ export default function OnboardingConnect() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { data: userData, isSuccess } = useCurrentUserQuery();
+  const { data: userData, isSuccess, refetch } = useCurrentUserQuery();
+
   useEffect(() => {
     if (isSuccess && userData) {
       dispatch(setCredentials({ user: userData.user }));
@@ -59,31 +61,48 @@ export default function OnboardingConnect() {
     }
 
     setConnectedPlatforms(set);
-
     setConnectedPlatforms(set);
   }
 }, [userData, user]);
 
+const refetchUser = async () => {
+  const result = await refetch();
+  return result.data;
+};
 
-  const handleConnect = (platformId) => {
-    // Dummy connection for other platforms
-    setIsConnecting(platformId);
-    setTimeout(() => {
-      setConnectedPlatforms((prev) => new Set(prev).add(platformId));
-      setIsConnecting(null);
-    }, 800);
-  };
+const disconnectLinkedIn = async () => {
+    await axios.delete("http://localhost:5000/api/auth/linkedin/disconnect", { withCredentials: true });
+}
+  
+const disconnectInstagram = async() => {
+    await axios.delete("http://localhost:5000/instagram/disconnect", { withCredentials: true });
+}
 
-  const handleDisconnect = (platformId) => {
+  const handleDisconnect = async(platformId) => {
+    try {
+      if (platformId === "linkedin") {
+        await disconnectLinkedIn();
+      } else if (platformId === "instagram") {
+        await disconnectInstagram();
+      }
+
+    // Refresh user from backend
+    const updated = await refetchUser(); // we'll define this below
+    dispatch(setCredentials({ user: updated.user }));
+
+    // Update UI
     setConnectedPlatforms((prev) => {
       const newSet = new Set(prev);
       newSet.delete(platformId);
       return newSet;
     });
+
+    } catch (err) {
+    console.error(err);
+    }
   };
 
   const handleContinue = () => {
-   
     navigate('/socials')
   };
 
@@ -159,7 +178,6 @@ export default function OnboardingConnect() {
           />
           <LinkedInConnectCard
           isConnected={connectedPlatforms.has("linkedin")}
-          onConnect={() => handleConnect("linkedin")}
           onDisconnect={() => handleDisconnect("linkedin")}
         />
 
@@ -173,7 +191,9 @@ export default function OnboardingConnect() {
               : `${connectedPlatforms.size} connected`}
           </p>
           <div className="flex gap-3">
-            <button className="py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-800">
+            <button 
+            className="py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-800"
+            onClick={() => navigate('/socials')}>
               Skip for now
             </button>
             <button
