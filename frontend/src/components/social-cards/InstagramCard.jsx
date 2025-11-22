@@ -2,11 +2,14 @@ import React from 'react'
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { TrendingUp, Calendar, Users, MoreVertical } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 
 const InstagramCard = () => {
   const user = useSelector(selectCurrentUser);
   const data = user.connectedAccounts.instagram;
+
+  const navigate = useNavigate();
   return (
                <div
                   key={data.instagramId}
@@ -69,7 +72,9 @@ const InstagramCard = () => {
                     </div>
                   </div>
                   <div  className="w-full mt-4 flex items-center justify-between gap-2">
-                  <button className="w-1/2 border border-neutral-300 px-5 py-2 rounded-xl cursor-pointer hover:border-purple-300 hover:bg-purple-50">
+                  <button 
+                  className="w-1/2 border border-neutral-300 px-5 py-2 rounded-xl cursor-pointer hover:border-purple-300 hover:bg-purple-50"
+                  onClick={()=>navigate('/ig-dashboard')}>
                     View Dashboard
                   </button>
                   <button className="w-1/2 border border-neutral-300 px-5 py-2 rounded-xl cursor-pointer hover:border-purple-300 hover:bg-purple-50">

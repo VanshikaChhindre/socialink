@@ -4,6 +4,7 @@ import { HeroSection, SignUp, Login, OnboardingConnect, Socials } from "./compon
 import { useDispatch } from "react-redux"
 import { logoutUser, setCredentials } from "./features/auth/authSlice.js"
 import { useEffect } from "react"
+import InstagramDashboard from "./components/dashboards/InstagramDashboard.jsx"
 
 function App() {
 
@@ -46,7 +47,8 @@ function App() {
           <Route path="/on-boarding" element={<OnboardingConnect/>}/>
           <Route path="/sign-up" element={<SignUp/>}/>
           <Route path="/login" element={<Login/>}/>
-           <Route path="/socials" element={<Socials/>}/>
+          <Route path="/socials" element={<Socials/>}/>
+          <Route path="/ig-dashboard" element={<InstagramDashboard/>}/>
         </Route>
     </Routes>
   )
